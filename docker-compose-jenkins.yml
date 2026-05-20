@@ -1,0 +1,17 @@
+
+services:
+  jenkins:
+    image: dockered-jenkins:v2
+    container_name: dockered-jenkins
+
+    ports:
+      - "18080:8080"
+
+    volumes:
+      - jenkins_home:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+
+    restart: unless-stopped
+
+volumes:
+  jenkins_home:
