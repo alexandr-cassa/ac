@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: g2048
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: g2048
+  template:
+    metadata:
+      labels:
+        app: g2048
+    spec:
+      containers:
+        - name: g2048
+          image: g2048:v2
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: DB_USERNAME
+              value: postgres
+            - name: DB_PASSWORD
+              value: postgres
+            - name: DB_URL
+              value: jdbc:postgresql://postgres:5432/g2048db
+            - name: REDIS_HOST
+              value: redis
+            - name: REDIS_PORT
+              value: "6379"
+
+

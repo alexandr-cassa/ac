@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: be-2048-spring
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME:postgres}
+    password: ${DB_PASSWORD:postgres}
+    url: ${DB_URL:jdbc:postgresql://localhost:5439/g2048-db}
+
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6378}
+      session-ttl-hours: 2
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  web:
+    error:
+      path: /error
+
+server:
+  port: ${GAME_PORT:8909}
+
+security:
+  enable: true
+
+

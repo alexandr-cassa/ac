@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2048 - Board</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="board-page">
+  <main class="board-shell">
+    <header class="board-topbar">
+      <h1>2048</h1>
+      <div class="board-actions">
+        <button id="save-exit-btn" class="home-btn home-btn-danger" type="button">Save and Exit</button>
+      </div>
+    </header>
+
+    <p id="board-status" class="home-hint" aria-live="polite"></p>
+
+    <section id="board-page-container">
+      <div id="board"></div>
+    </section>
+  </main>
+
+  <script src="scripts/api.js"></script>
+  <script src="scripts/arrayUtils.js"></script>
+  <script src="scripts/random.js"></script>
+  <script src="scripts/color.js"></script>
+  <script src="scripts/board.js" type="module"></script>
+  <script src="scripts/game.js" type="module"></script>
+  <script src="scripts/board-page.js" type="module"></script>
+</body>
+</html>

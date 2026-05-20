@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - 2048</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <h1>Welcome back</h1>
+        <p class="subtitle">Sign in to continue your 2048 journey.</p>
+
+        <form id="login-form" class="auth-form" action="#" method="post">
+            <label for="login-username">Username</label>
+            <input id="login-username" name="username" type="text" required>
+
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" required>
+
+            <button type="submit">Sign In</button>
+        </form>
+
+        <p id="auth-message" class="auth-message" aria-live="polite"></p>
+
+        <p class="auth-link-row">
+            Don't have an account?
+            <a href="register.html">Register</a>
+        </p>
+        <p class="auth-link-row auth-link-row-secondary">
+            <a href="index.html">Back to Home</a>
+        </p>
+    </main>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/auth.js"></script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - 2048</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="auth-page">
+    <main class="auth-card">
+        <h1>Create account</h1>
+        <p class="subtitle">Start your 2048 journey.</p>
+
+        <form id="register-form" class="auth-form" action="#" method="post">
+            <label for="register-username">Username</label>
+            <input id="register-username" name="username" type="text" required>
+
+            <label for="register-password">Password</label>
+            <input id="register-password" name="password" type="password" required>
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p id="auth-message" class="auth-message" aria-live="polite"></p>
+
+        <p class="auth-link-row">
+            Already have an account?
+            <a href="login.html">Login</a>
+        </p>
+        <p class="auth-link-row auth-link-row-secondary">
+            <a href="index.html">Back to Home</a>
+        </p>
+    </main>
+
+    <script src="scripts/api.js"></script>
+    <script src="scripts/auth.js"></script>
+</body>
+</html>

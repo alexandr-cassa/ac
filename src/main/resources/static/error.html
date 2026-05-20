@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Error - 2048</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .error-container {
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      padding: 60px 40px;
+      text-align: center;
+      max-width: 600px;
+      animation: slideIn 0.5s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .error-code {
+      font-size: 120px;
+      font-weight: bold;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0;
+      line-height: 1;
+    }
+
+    .error-title {
+      font-size: 32px;
+      color: #333;
+      margin: 20px 0;
+      font-weight: 600;
+    }
+
+    .error-message {
+      font-size: 16px;
+      color: #666;
+      margin: 20px 0;
+      line-height: 1.6;
+    }
+
+    .error-icon {
+      font-size: 80px;
+      margin: 20px 0;
+    }
+
+    .error-actions {
+      display: flex;
+      gap: 15px;
+      margin-top: 40px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .error-btn {
+      padding: 12px 30px;
+      border: none;
+      border-radius: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .error-btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+    }
+
+    .error-btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+    }
+
+    .error-btn-secondary {
+      background: #f5f5f5;
+      color: #333;
+      border: 2px solid #ddd;
+    }
+
+    .error-btn-secondary:hover {
+      border-color: #667eea;
+      color: #667eea;
+    }
+
+    .error-details {
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #eee;
+      text-align: left;
+    }
+
+    .error-details-title {
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 10px;
+    }
+
+    .error-details-content {
+      background: #f9f9f9;
+      padding: 15px;
+      border-radius: 6px;
+      font-size: 13px;
+      color: #666;
+      font-family: 'Courier New', monospace;
+      word-break: break-word;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .error-separator {
+      color: #ccc;
+      margin: 0 10px;
+    }
+
+    @media (max-width: 600px) {
+      .error-container {
+        padding: 40px 20px;
+      }
+
+      .error-code {
+        font-size: 80px;
+      }
+
+      .error-title {
+        font-size: 24px;
+      }
+
+      .error-actions {
+        flex-direction: column;
+      }
+
+      .error-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="error-container">
+    <div class="error-icon">⚠️</div>
+    <h1 class="error-code" id="errorCode">404</h1>
+    <h2 class="error-title" id="errorTitle">Page Not Found</h2>
+    <p class="error-message" id="errorMessage">
+      Sorry, the page you're looking for doesn't exist. It might have been moved or deleted.
+    </p>
+
+    <div class="error-actions">
+      <button class="error-btn error-btn-primary" onclick="window.location.href='index.html'">
+        Go to Home
+      </button>
+      <button class="error-btn error-btn-secondary" onclick="window.history.back()">
+        Go Back
+      </button>
+    </div>
+
+    <div class="error-details" id="errorDetailsContainer" style="display: none;">
+      <div class="error-details-title">Error Details</div>
+      <div class="error-details-content" id="errorDetailsContent"></div>
+    </div>
+  </div>
+
+  <script>
+    // Get error info from URL parameters or localStorage
+    const params = new URLSearchParams(window.location.search);
+    const errorCode = params.get('code') || localStorage.getItem('errorCode') || '404';
+    const errorTitle = params.get('title') || localStorage.getItem('errorTitle') || 'Page Not Found';
+    const errorMessage = params.get('message') || localStorage.getItem('errorMessage') || 'Sorry, the page you\'re looking for doesn\'t exist.';
+    const errorDetails = params.get('details') || localStorage.getItem('errorDetails');
+
+    // Update page with error info
+    document.getElementById('errorCode').textContent = errorCode;
+    document.getElementById('errorTitle').textContent = errorTitle;
+    document.getElementById('errorMessage').textContent = errorMessage;
+
+    // Update icon based on error code
+    const iconMap = {
+      '400': '❌',
+      '401': '🔒',
+      '403': '⛔',
+      '404': '❓',
+      '500': '💥',
+      '502': '🌐',
+      '503': '⏳'
+    };
+
+    const icon = document.querySelector('.error-icon');
+    if (iconMap[errorCode]) {
+      icon.textContent = iconMap[errorCode];
+    }
+
+    // Show error details if available
+    if (errorDetails) {
+      document.getElementById('errorDetailsContainer').style.display = 'block';
+      document.getElementById('errorDetailsContent').textContent = errorDetails;
+    }
+
+    // Clear localStorage after displaying
+    localStorage.removeItem('errorCode');
+    localStorage.removeItem('errorTitle');
+    localStorage.removeItem('errorMessage');
+    localStorage.removeItem('errorDetails');
+  </script>
+</body>
+</html>
+

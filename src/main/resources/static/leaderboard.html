@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Leaderboard - 2048</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .leaderboard-page {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      /*background: radial-gradient(circle at top, #f5efe6 0%, #ece3d7 45%, #e4d7c6 100%);*/
+    }
+
+    .leaderboard-container {
+      width: min(860px, 96vw);
+      background: #faf8ef;
+      border: 1px solid #d6c8b7;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(143, 122, 102, 0.25);
+      padding: 30px;
+    }
+
+    .leaderboard-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .leaderboard-header h1 {
+      font-size: 2.2rem;
+      margin: 0 0 6px 0;
+      color: #776e65;
+      letter-spacing: 0.2px;
+    }
+
+    .leaderboard-header p {
+      font-size: 1rem;
+      color: #8f7a66;
+      margin: 0;
+    }
+
+    .leaderboard-error {
+      background: #f2ebe4;
+      color: #c85f52;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #c85f52;
+      font-weight: 600;
+    }
+
+    .leaderboard-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .leaderboard-stat-card {
+      background: #eee4da;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #d6c8b7;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .leaderboard-stat-card:hover {
+      background: #ece0d0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(143, 122, 102, 0.15);
+    }
+
+    .leaderboard-stat-label {
+      color: #8f7a66;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .leaderboard-stat-value {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #776e65;
+      margin: 0;
+    }
+
+    .leaderboard-content {
+      margin-top: 20px;
+    }
+
+    .leaderboard-loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #eee4da;
+      border-top: 4px solid #8f7a66;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .leaderboard-table-wrapper {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    .leaderboard-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 1rem;
+    }
+
+    .leaderboard-table thead {
+      background: #bbada0;
+      color: #faf8ef;
+    }
+
+    .leaderboard-table thead th {
+      padding: 14px 15px;
+      text-align: left;
+      font-weight: 700;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .leaderboard-table tbody tr {
+      border-bottom: 1px solid #d6c8b7;
+      transition: background-color 0.15s ease;
+    }
+
+    .leaderboard-table tbody tr:hover {
+      background-color: #eee4da;
+    }
+
+    .leaderboard-table tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .leaderboard-table td {
+      padding: 14px 15px;
+      color: #776e65;
+    }
+
+    .leaderboard-rank {
+      font-weight: 700;
+      color: #776e65;
+      font-size: 1.1rem;
+      width: 60px;
+    }
+
+    .leaderboard-rank.top-1 {
+      color: #FFD700;
+      font-size: 1.3rem;
+    }
+
+    .leaderboard-rank.top-2 {
+      color: #C0C0C0;
+      font-size: 1.3rem;
+    }
+
+    .leaderboard-rank.top-3 {
+      color: #CD7F32;
+      font-size: 1.3rem;
+    }
+
+    .leaderboard-username {
+      font-weight: 700;
+      color: #776e65;
+    }
+
+    .leaderboard-score {
+      font-weight: 700;
+      color: #8f7a66;
+      text-align: right;
+    }
+
+    .leaderboard-moves {
+      color: #9f8772;
+      text-align: right;
+      font-size: 0.95rem;
+    }
+
+    .leaderboard-empty {
+      text-align: center;
+      padding: 60px 20px;
+      color: #8f7a66;
+    }
+
+    .leaderboard-empty-icon {
+      font-size: 64px;
+      margin-bottom: 15px;
+    }
+
+    .leaderboard-empty h2 {
+      font-size: 1.5rem;
+      color: #776e65;
+      margin: 0 0 8px 0;
+      font-weight: 700;
+    }
+
+    .leaderboard-empty p {
+      font-size: 1rem;
+      margin: 0;
+    }
+
+    .leaderboard-actions {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #d6c8b7;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .leaderboard-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+    }
+
+    .leaderboard-btn-home {
+      background: #8f7a66;
+      color: white;
+    }
+
+    .leaderboard-btn-home:hover {
+      background: #776e65;
+      box-shadow: 0 6px 14px rgba(143, 122, 102, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .leaderboard-btn-refresh {
+      background: #eee4da;
+      color: #776e65;
+      border: 1px solid #d6c8b7;
+    }
+
+    .leaderboard-btn-refresh:hover {
+      background: #ece0d0;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .leaderboard-container {
+        padding: 20px;
+      }
+
+      .leaderboard-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .leaderboard-table {
+        font-size: 0.9rem;
+      }
+
+      .leaderboard-table th,
+      .leaderboard-table td {
+        padding: 10px 8px;
+      }
+
+      .leaderboard-rank {
+        width: 40px;
+        font-size: 0.95rem;
+      }
+
+      .leaderboard-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .leaderboard-actions {
+        flex-direction: column;
+      }
+
+      .leaderboard-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="leaderboard-page">
+    <div class="leaderboard-container">
+      <div class="leaderboard-header">
+        <h1>🏆 Leaderboard</h1>
+        <p>Top players and their scores</p>
+      </div>
+
+      <div id="errorContainer"></div>
+
+      <div class="leaderboard-content">
+        <div class="leaderboard-stats-grid" id="statsContainer" style="display: none;">
+          <div class="leaderboard-stat-card">
+            <div class="leaderboard-stat-label">Total Players</div>
+            <div class="leaderboard-stat-value" id="totalPlayers">0</div>
+          </div>
+          <div class="leaderboard-stat-card">
+            <div class="leaderboard-stat-label">Top Score</div>
+            <div class="leaderboard-stat-value" id="topScore">0</div>
+          </div>
+        </div>
+
+        <div id="loadingContainer" class="leaderboard-loading">
+          <div class="spinner"></div>
+          <p>Loading leaderboard...</p>
+        </div>
+
+        <div class="leaderboard-table-wrapper" id="tableWrapper" style="display: none;">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Player</th>
+                <th>Score</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboardBody"></tbody>
+          </table>
+        </div>
+
+        <div id="emptyContainer" class="leaderboard-empty" style="display: none;">
+          <div class="leaderboard-empty-icon">📊</div>
+          <h2>No players yet</h2>
+          <p>Be the first to play and appear on the leaderboard!</p>
+        </div>
+      </div>
+
+      <div class="leaderboard-actions">
+        <button class="leaderboard-btn leaderboard-btn-home" onclick="window.location.href='home.html'">
+          ← Back to Home
+        </button>
+        <button class="leaderboard-btn leaderboard-btn-refresh" onclick="loadLeaderboard()">
+          ↻ Refresh
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/api.js"></script>
+  <script>
+    async function loadLeaderboard() {
+      try {
+        // Show loading state
+        document.getElementById('loadingContainer').style.display = 'block';
+        document.getElementById('tableWrapper').style.display = 'none';
+        document.getElementById('emptyContainer').style.display = 'none';
+        document.getElementById('statsContainer').style.display = 'none';
+        document.getElementById('errorContainer').innerHTML = '';
+
+        // Fetch leaderboard data
+        const data = await window.api.getLeaderboard();
+
+        if (!data || data.length === 0) {
+          showEmpty();
+          return;
+        }
+
+        // Calculate stats
+        const topScore = data[0]?.scores || 0;
+
+        // Update stats
+        document.getElementById('totalPlayers').textContent = data.length;
+        document.getElementById('topScore').textContent = topScore.toLocaleString();
+        document.getElementById('statsContainer').style.display = 'grid';
+
+        // Populate leaderboard table
+        const tbody = document.getElementById('leaderboardBody');
+        tbody.innerHTML = '';
+
+        data.forEach((player, index) => {
+          const rank = index + 1;
+          const row = document.createElement('tr');
+
+          let rankClass = '';
+          let rankIcon = rank;
+
+          if (rank === 1) {
+            rankClass = 'top-1';
+            rankIcon = '🥇';
+          } else if (rank === 2) {
+            rankClass = 'top-2';
+            rankIcon = '🥈';
+          } else if (rank === 3) {
+            rankClass = 'top-3';
+            rankIcon = '🥉';
+          }
+
+          row.innerHTML = `
+            <td class="leaderboard-rank ${rankClass}">${rankIcon}</td>
+            <td class="leaderboard-username">${escapeHtml(player.username || 'Unknown')}</td>
+            <td class="leaderboard-score">${(player.scores || 0).toLocaleString()}</td>
+          `;
+
+          tbody.appendChild(row);
+        });
+
+        // Show table
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('tableWrapper').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error loading leaderboard:', error);
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('errorContainer').innerHTML = `
+          <div class="leaderboard-error">
+            <strong>Error:</strong> ${error.message || 'Failed to load leaderboard'}
+          </div>
+        `;
+      }
+    }
+
+    function showEmpty() {
+      document.getElementById('loadingContainer').style.display = 'none';
+      document.getElementById('tableWrapper').style.display = 'none';
+      document.getElementById('emptyContainer').style.display = 'block';
+    }
+
+    function escapeHtml(text) {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Load leaderboard on page load
+    loadLeaderboard();
+  </script>
+</body>
+</html>
+
+
+

@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profile - 2048</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    .profile-page {
+      min-height: 100vh;
+      margin: 0;
+      display: grid;
+      place-items: center;
+      background: radial-gradient(circle at top, #f5efe6 0%, #ece3d7 45%, #e4d7c6 100%);
+    }
+
+    .profile-container {
+      width: min(860px, 96vw);
+      background: #faf8ef;
+      border: 1px solid #d6c8b7;
+      border-radius: 18px;
+      box-shadow: 0 18px 40px rgba(143, 122, 102, 0.25);
+      padding: 30px;
+    }
+
+    .profile-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .profile-header h1 {
+      font-size: 2.2rem;
+      margin: 0 0 6px 0;
+      color: #776e65;
+      letter-spacing: 0.2px;
+    }
+
+    .profile-header p {
+      font-size: 1rem;
+      color: #8f7a66;
+      margin: 0;
+    }
+
+    .profile-error {
+      background: #f2ebe4;
+      color: #c85f52;
+      padding: 15px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      border-left: 4px solid #c85f52;
+      font-weight: 600;
+    }
+
+    .profile-content {
+      margin-top: 20px;
+    }
+
+    .profile-loading {
+      text-align: center;
+      padding: 60px 20px;
+    }
+
+    .spinner {
+      display: inline-block;
+      width: 40px;
+      height: 40px;
+      border: 4px solid #eee4da;
+      border-top: 4px solid #8f7a66;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .profile-avatar-section {
+      text-align: center;
+      margin-bottom: 30px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid #d6c8b7;
+    }
+
+    .profile-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #bbada0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 50px;
+      margin: 0 auto 15px;
+      box-shadow: 0 6px 14px rgba(143, 122, 102, 0.15);
+    }
+
+    .profile-username {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #776e65;
+      margin: 0 0 6px 0;
+    }
+
+    .profile-user-id {
+      font-size: 0.9rem;
+      color: #8f7a66;
+      margin: 0;
+    }
+
+    .profile-stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    .profile-stat-card {
+      background: #eee4da;
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #d6c8b7;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+
+    .profile-stat-card:hover {
+      background: #ece0d0;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(143, 122, 102, 0.15);
+    }
+
+    .profile-stat-label {
+      color: #8f7a66;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 8px;
+    }
+
+    .profile-stat-value {
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: #776e65;
+      margin: 0;
+    }
+
+    .profile-section {
+      margin-bottom: 25px;
+    }
+
+    .profile-section-title {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #776e65;
+      margin: 0 0 12px 0;
+      padding-bottom: 8px;
+      border-bottom: 1px solid #d6c8b7;
+    }
+
+    .profile-info-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px 0;
+      border-bottom: 1px solid #eee4da;
+    }
+
+    .profile-info-row:last-child {
+      border-bottom: none;
+    }
+
+    .profile-info-label {
+      color: #8f7a66;
+      font-weight: 600;
+    }
+
+    .profile-info-value {
+      color: #776e65;
+      font-weight: 700;
+    }
+
+    .profile-info-value.badge {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      background: #eee4da;
+      color: #8f7a66;
+      border: 1px solid #d6c8b7;
+    }
+
+    .profile-games-section {
+      margin-top: 25px;
+    }
+
+    .profile-games-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 12px;
+    }
+
+    .profile-game-card {
+      background: #eee4da;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #d6c8b7;
+      transition: all 0.15s ease;
+    }
+
+    .profile-game-card:hover {
+      border-color: #8f7a66;
+      box-shadow: 0 4px 10px rgba(143, 122, 102, 0.1);
+      transform: translateY(-1px);
+    }
+
+    .profile-game-status {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .profile-game-status.won {
+      color: #76b349;
+    }
+
+    .profile-game-status.lost {
+      color: #c85f52;
+    }
+
+    .profile-game-status.in-progress {
+      color: #d4ad4f;
+    }
+
+    .profile-game-score {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: #776e65;
+      margin: 5px 0;
+    }
+
+    .profile-game-moves {
+      font-size: 0.85rem;
+      color: #8f7a66;
+    }
+
+    .profile-empty {
+      text-align: center;
+      padding: 40px 20px;
+      color: #8f7a66;
+    }
+
+    .profile-empty-icon {
+      font-size: 48px;
+      margin-bottom: 10px;
+    }
+
+    .profile-actions {
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #d6c8b7;
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .profile-btn {
+      padding: 12px 24px;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+    }
+
+    .profile-btn-home {
+      background: #8f7a66;
+      color: white;
+    }
+
+    .profile-btn-home:hover {
+      background: #776e65;
+      box-shadow: 0 6px 14px rgba(143, 122, 102, 0.25);
+      transform: translateY(-1px);
+    }
+
+    .profile-btn-logout {
+      background: #f2ebe4;
+      color: #c85f52;
+      border: 1px solid #c85f52;
+    }
+
+    .profile-btn-logout:hover {
+      background: #c85f52;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      .profile-container {
+        padding: 20px;
+      }
+
+      .profile-header h1 {
+        font-size: 1.8rem;
+      }
+
+      .profile-avatar {
+        width: 80px;
+        height: 80px;
+        font-size: 40px;
+      }
+
+      .profile-username {
+        font-size: 1.4rem;
+      }
+
+      .profile-stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .profile-games-list {
+        grid-template-columns: 1fr;
+      }
+
+      .profile-info-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .profile-actions {
+        flex-direction: column;
+      }
+
+      .profile-btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="profile-page">
+    <div class="profile-container">
+      <div class="profile-header">
+        <h1>👤 Profile</h1>
+        <p>Your game statistics and information</p>
+      </div>
+
+      <div id="errorContainer"></div>
+
+      <div id="loadingContainer" class="profile-loading">
+        <div class="spinner"></div>
+        <p>Loading profile...</p>
+      </div>
+
+      <div id="profileContent" style="display: none;">
+        <div class="profile-content">
+          <!-- Avatar Section -->
+          <div class="profile-avatar-section">
+            <div class="profile-avatar">👾</div>
+            <h2 class="profile-username" id="username">Loading...</h2>
+            <p class="profile-user-id" id="userId">ID: -</p>
+          </div>
+
+          <!-- Stats Grid -->
+          <div class="profile-stats-grid" id="statsGrid"></div>
+
+          <!-- Additional Info -->
+          <div class="profile-section">
+            <h3 class="profile-section-title">Account Information</h3>
+            <div class="profile-info-row">
+              <span class="profile-info-label">Member Since</span>
+              <span class="profile-info-value" id="memberSince">-</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label">Total Games</span>
+              <span class="profile-info-value" id="totalGames">0</span>
+            </div>
+            <div class="profile-info-row">
+              <span class="profile-info-label">Account Status</span>
+              <span class="profile-info-value badge">Active</span>
+            </div>
+          </div>
+
+          <!-- Recent Games -->
+          <div class="profile-games-section">
+            <h3 class="profile-section-title">Recent Games</h3>
+            <div class="profile-games-list" id="recentGamesList"></div>
+            <div id="noGamesContainer" class="profile-empty" style="display: none;">
+              <div class="profile-empty-icon">📭</div>
+              <p>No games played yet. Start playing to see your games here!</p>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="profile-actions">
+            <button class="profile-btn profile-btn-home" onclick="window.location.href='home.html'">
+              ← Back to Home
+            </button>
+            <button class="profile-btn profile-btn-logout" onclick="logout()">
+              🚪 Logout
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="scripts/api.js"></script>
+  <script>
+    async function loadProfile() {
+      try {
+        document.getElementById('loadingContainer').style.display = 'block';
+        document.getElementById('profileContent').style.display = 'none';
+        document.getElementById('errorContainer').innerHTML = '';
+
+        // Call the /users/personal-info endpoint
+        const personalInfo = await window.api.getPersonalInfo();
+
+        // Format win percentage
+        const winPercentage = personalInfo.winPercentage !== null
+          ? (personalInfo.winPercentage * 100).toFixed(1)
+          : 0;
+
+        // Populate profile data
+        document.getElementById('username').textContent = personalInfo.username;
+        document.getElementById('memberSince').textContent = new Date().toLocaleDateString();
+        document.getElementById('totalGames').textContent = personalInfo.totalGames || 0;
+
+        // Create stats cards
+        const statsContainer = document.getElementById('statsGrid');
+        statsContainer.innerHTML = `
+          <div class="profile-stat-card">
+            <div class="profile-stat-label">Total Games</div>
+            <p class="profile-stat-value">${personalInfo.totalGames || 0}</p>
+          </div>
+          <div class="profile-stat-card">
+            <div class="profile-stat-label">Games Won</div>
+            <p class="profile-stat-value">${personalInfo.wonGames || 0}</p>
+          </div>
+          <div class="profile-stat-card">
+            <div class="profile-stat-label">Win Rate</div>
+            <p class="profile-stat-value">${winPercentage}%</p>
+          </div>
+          <div class="profile-stat-card">
+            <div class="profile-stat-label">Total Score</div>
+            <p class="profile-stat-value">${(personalInfo.totalScores || 0).toLocaleString()}</p>
+          </div>
+        `;
+
+        // Show no games message if no games
+        if ((personalInfo.totalGames || 0) === 0) {
+          document.getElementById('noGamesContainer').style.display = 'block';
+          document.getElementById('recentGamesList').innerHTML = '';
+        }
+
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('profileContent').style.display = 'block';
+
+      } catch (error) {
+        console.error('Error loading profile:', error);
+        document.getElementById('loadingContainer').style.display = 'none';
+        document.getElementById('errorContainer').innerHTML = `
+          <div class="profile-error">
+            <strong>Error:</strong> ${error.message || 'Failed to load profile'}
+          </div>
+        `;
+      }
+    }
+
+    async function logout() {
+      const btn = event.target;
+      btn.disabled = true;
+      btn.textContent = 'Logging out...';
+
+      try {
+        if (window.api && typeof window.api.logout === 'function') {
+          await window.api.logout();
+        }
+      } catch (_) {
+        // Continue cleanup even if logout fails
+      } finally {
+        localStorage.removeItem('be2048:lastGameId');
+        localStorage.removeItem('be2048:currentGameId');
+        window.location.href = 'login.html';
+      }
+    }
+
+    // Load profile on page load
+    loadProfile();
+  </script>
+</body>
+</html>
+
