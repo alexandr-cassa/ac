@@ -1,10 +1,17 @@
 pipeline {
-    agent any
-
+    agent {
+        dockerContainer {
+            image 'maven:3.9.16-eclipse-temurin-21-alpine'
+        }
+    }
+    triggers {
+        pollSCM('H/1 * * * *')
+    }
     stages {
-        stage('Perform Maven Clean') {
+        stage('build') {
             steps {
-                sh 'mvn clean'
+                checkout scm
+                sh 'mvn --version'
             }
         }
     }
