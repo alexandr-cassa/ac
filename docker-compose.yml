@@ -50,3 +50,4 @@ networks:
   g2048-network:
     driver: bridge
 
+
