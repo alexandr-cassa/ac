@@ -1,7 +1,7 @@
 
 services:
   jenkins:
-    image: dockered-jenkins:v2
+    image: dockered-jenkins:v3
     container_name: dockered-jenkins
 
     ports:
