@@ -3,8 +3,12 @@ pipeline {
 
     environment {
         APP_NAME = 'g2048'
-        MANIFEST_FILE = 'g2048/deployment.yaml'
+        MANIFEST_FILE = 'g2048/deployment.yml'
         GIT_BRANCH = 'master'
+    }
+
+    triggers {
+        pollSCM('* * * * *')
     }
 
     stages {
@@ -35,17 +39,24 @@ pipeline {
 
         stage('Update Argo manifest') {
             steps {
-                sh '''
-                  cd ac-k8s
-                  yq -i '(.spec.template.spec.containers[] | select(.image | test("^g2048:")) | .image) = strenv(IMAGE_TAG)' "$MANIFEST_FILE"
+                withCredentials([usernamePassword(
+                        credentialsId: 'github-access-k8s',
+                        usernameVariable: 'GIT_USERNAME',
+                        passwordVariable: 'GIT_TOKEN'
+                )]) {
+                    sh '''
+              cd ac-k8s
 
-                  git config user.name "jenkins"
-                  git config user.email "jenkins@example.com"
+              sed -i '/image: g2048:/s|image: .*|image: '"$IMAGE_TAG"'|' "$MANIFEST_FILE"
+              git config user.name "jenkins"
+              git config user.email "jenkins@example.com"
 
-                  git add ${MANIFEST_FILE}
-                  git commit -m "Update ${APP_NAME} image to ${COMMIT_HASH}" || echo "No changes to commit"
-                  git push origin ${GIT_BRANCH}
-                '''
+              git add "$MANIFEST_FILE"
+              git commit -m "Update ${APP_NAME} image to ${COMMIT_HASH}" || echo "No changes to commit"
+
+              git push https://${GIT_USERNAME}:${GIT_TOKEN}@github.com/alexandr-cassa/ac-k8s.git "$GIT_BRANCH"
+            '''
+                }
             }
         }
     }
