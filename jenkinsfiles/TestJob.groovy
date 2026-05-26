@@ -11,9 +11,9 @@ pipeline {
                 sh 'java --version'
             }
         }
-        stage('Run mvn clean install') {
+        stage('Build docker image') {
             steps {
-                sh 'mvn clean install -DskipTests'
+                sh 'docker build -f Dockerfile -t g2048:latest .'
             }
         }
     }
