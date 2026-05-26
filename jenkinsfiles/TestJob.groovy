@@ -1,19 +1,17 @@
 pipeline {
     agent any
 
-    triggers {
-        pollSCM('H/1 * * * *')
-    }
     stages {
-        stage('Check versions') {
+        stage('Build image') {
             steps {
-                sh 'mvn --version'
-                sh 'java --version'
-            }
-        }
-        stage('Build docker image') {
-            steps {
-                sh 'docker build -f Dockerfile -t g2048:latest .'
+                script {
+                    def commitHash = sh(
+                            script: 'git rev-parse --short HEAD',
+                            returnStdout: true
+                    ).trim()
+
+                    sh "docker build -t g2048:${commitHash} ."
+                }
             }
         }
     }
